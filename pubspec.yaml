@@ -1,0 +1,19 @@
+name: brick_breaker
+description: "Walking through Flutter Team's Codelab: Introduction to Flame with Flutter (Re-implementing Woz's Breakout) https://codelabs.developers.google.com/codelabs/flutter-flame-brick-breaker"
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
