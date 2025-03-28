@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math' as math;
 
+import 'package:brick_breaker/src/components/ball.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 
@@ -21,6 +23,7 @@ class BrickBreaker extends FlameGame {
           ),
         );
 
+  final rand = math.Random();
   double get width => size.x;
   double get height => size.y;
 
@@ -43,5 +46,31 @@ class BrickBreaker extends FlameGame {
     // those Components. This may confuse you and your app's players
     // when resizing the window doesn't behave how you expect.
     world.add(PlayArea());
+
+    // Add the Ball component to the world. To set the
+    // ball's position to the center of the display area, the code
+    // first halves the size of the game, as Vector2 has operator
+    // overloads (* and /) to scale a Vector2 by a scalar value.
+    //
+    // Call to normalized creates a Vector2 object set to the same
+    // direction as the original Vector2, but scaled down to a
+    // distance of 1. This keeps the speed of the ball consistent
+    // no matter which direction the ball goes. The ball's velocity
+    // is then scaled up to be a 1/4 of the height of the game.
+    world.add(
+      Ball(
+        radius: ballRadius,
+        position: size / 2,
+        velocity: Vector2(
+          (rand.nextDouble() - 0.5) * width,
+          height * 0.2,
+        ).normalized()
+          ..scale(height / 4),
+      ),
+    );
+
+    // Turn on the debugging display, which adds additional
+    // information to the display to help with debugging.
+    debugMode = true;
   }
 }
