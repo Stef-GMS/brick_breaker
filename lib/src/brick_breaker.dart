@@ -13,7 +13,11 @@ import 'package:brick_breaker/src/config.dart';
 // fixed resolution rendering. The game resizes to fill the
 // screen that contains it and adds letterboxing as required.
 
-class BrickBreaker extends FlameGame {
+class BrickBreaker extends FlameGame
+    with
+        // HasCollisionDetection tracks the hitboxes of components
+        // and triggers collision callbacks on every game tick
+        HasCollisionDetection {
   BrickBreaker()
       : super(
           // expose the width and height of the game so that the children components,
