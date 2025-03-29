@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:brick_breaker/src/components/ball.dart';
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:brick_breaker/src/components/components.dart';
 import 'package:brick_breaker/src/config.dart';
@@ -17,7 +20,8 @@ class BrickBreaker extends FlameGame
     with
         // HasCollisionDetection tracks the hitboxes of components
         // and triggers collision callbacks on every game tick
-        HasCollisionDetection {
+        HasCollisionDetection,
+        KeyboardEvents {
   BrickBreaker()
       : super(
           // expose the width and height of the game so that the children components,
@@ -73,8 +77,42 @@ class BrickBreaker extends FlameGame
       ),
     );
 
+    // adds the bat to the game world in the appropriate
+    // position and with the right proportions
+    world.add(
+      Bat(
+        size: Vector2(batWidth, batHeight),
+        cornerRadius: const Radius.circular(ballRadius / 2),
+        position: Vector2(
+          width / 2,
+          height * 0.95,
+        ),
+      ),
+    );
+
     // Turn on the debugging display, which adds additional
     // information to the display to help with debugging.
     debugMode = true;
+  }
+
+  // The addition of the KeyboardEvents mixin and the overridden
+  // onKeyEvent method handle the keyboard input.
+  @override
+  KeyEventResult onKeyEvent(
+    KeyEvent event,
+    Set<LogicalKeyboardKey> keysPressed,
+  ) {
+    super.onKeyEvent(
+      event,
+      keysPressed,
+    );
+
+    switch (event.logicalKey) {
+      case LogicalKeyboardKey.arrowLeft:
+        world.children.query<Bat>().first.moveBy(-batStep);
+      case LogicalKeyboardKey.arrowRight:
+        world.children.query<Bat>().first.moveBy(batStep);
+    }
+    return KeyEventResult.handled;
   }
 }
