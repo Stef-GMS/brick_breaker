@@ -11,6 +11,15 @@ import 'package:flutter/services.dart';
 import 'package:brick_breaker/src/components/components.dart';
 import 'package:brick_breaker/src/config.dart';
 
+// Captures where the player is in entering, playing,
+// and either losing or winning the game.
+enum PlayState {
+  welcome,
+  playing,
+  gameOver,
+  won,
+}
+
 // This file coordinates the game's actions. During construction
 // of the game instance, this code configures the game to use
 // fixed resolution rendering. The game resizes to fill the
@@ -21,10 +30,12 @@ class BrickBreaker extends FlameGame
         // HasCollisionDetection tracks the hitboxes of components
         // and triggers collision callbacks on every game tick
         HasCollisionDetection,
-        KeyboardEvents {
+        KeyboardEvents,
+        TapDetector {
   BrickBreaker()
       : super(
-          // expose the width and height of the game so that the children components,
+          // expose the width and height of the game so
+          // that the children components,
           camera: CameraComponent.withFixedResolution(
             width: gameWidth,
             height: gameHeight,
@@ -34,6 +45,30 @@ class BrickBreaker extends FlameGame
   final rand = math.Random();
   double get width => size.x;
   double get height => size.y;
+
+  //  instantiate enum as a hidden state with matching getters
+  //  and setters.
+  late PlayState _playState;
+
+  // These getters and setters enable modifying
+  // overlays when the various parts of the game
+  // trigger play state transitions.
+  PlayState get playState => _playState;
+
+  set playState(PlayState playState) {
+    _playState = playState;
+
+    switch (playState) {
+      case PlayState.welcome:
+      case PlayState.gameOver:
+      case PlayState.won:
+        overlays.add(playState.name);
+      case PlayState.playing:
+        overlays.remove(PlayState.welcome.name);
+        overlays.remove(PlayState.gameOver.name);
+        overlays.remove(PlayState.won.name);
+    }
+  }
 
   @override
   FutureOr<void> onLoad() async {
@@ -54,6 +89,18 @@ class BrickBreaker extends FlameGame
     // those Components. This may confuse you and your app's players
     // when resizing the window doesn't behave how you expect.
     world.add(PlayArea());
+
+    playState = PlayState.welcome;
+  }
+
+  void startGame() {
+    if (playState == PlayState.playing) return;
+
+    world.removeAll(world.children.query<Ball>());
+    world.removeAll(world.children.query<Bat>());
+    world.removeAll(world.children.query<Brick>());
+
+    playState = PlayState.playing;
 
     // Add the Ball component to the world. To set the
     // ball's position to the center of the display area, the code
@@ -91,7 +138,8 @@ class BrickBreaker extends FlameGame
       ),
     );
 
-    await world.addAll(
+    // Add the bricks to make a brick wall
+    world.addAll(
       [
         // Add from here...
         for (var i = 0; i < brickColors.length; i++)
@@ -108,8 +156,14 @@ class BrickBreaker extends FlameGame
 
     // Turn on the debugging display, which adds additional
     // information to the display to help with debugging.
-    debugMode = true;
+    //debugMode = true;
   }
+
+  @override // Add from here...
+  void onTap() {
+    super.onTap();
+    startGame();
+  } // To here.
 
   // The addition of the KeyboardEvents mixin and the overridden
   // onKeyEvent method handle the keyboard input.
@@ -128,7 +182,13 @@ class BrickBreaker extends FlameGame
         world.children.query<Bat>().first.moveBy(-batStep);
       case LogicalKeyboardKey.arrowRight:
         world.children.query<Bat>().first.moveBy(batStep);
+      case LogicalKeyboardKey.space: // Add from here...
+      case LogicalKeyboardKey.enter:
+        startGame();
     }
     return KeyEventResult.handled;
   }
+
+  @override
+  Color backgroundColor() => const Color(0xfff2e8cf);
 }

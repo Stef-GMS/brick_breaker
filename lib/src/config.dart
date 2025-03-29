@@ -22,7 +22,7 @@ const gameHeight = 1600.0;
 
 const ballRadius = gameWidth * 0.02;
 
-const batWidth = gameWidth * 0.2;
+const batWidth = gameWidth; // * 0.2;
 const batHeight = ballRadius * 2;
 
 // To interact with the ball in this game, the player can drag the

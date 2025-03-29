@@ -40,6 +40,10 @@ class Brick extends RectangleComponent
     // The win condition check queries the world for bricks,
     // and confirms that only one remains.
     if (game.world.children.query<Brick>().length == 1) {
+      // if the player can break all the bricks,
+      // they have earned a "game won" screen.
+      game.playState = PlayState.won;
+
       // component removal is a queued command. It removes
       // the brick after this code runs, but before the next
       // tick of the game world.

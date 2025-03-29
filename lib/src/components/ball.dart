@@ -71,6 +71,10 @@ class Ball extends CircleComponent
         add(
           RemoveEffect(
             delay: 0.35,
+            // Triggers the gameOver play state.
+            onComplete: () {
+              game.playState = PlayState.gameOver;
+            },
           ),
         );
       }
