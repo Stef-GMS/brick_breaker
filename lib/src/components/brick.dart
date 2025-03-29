@@ -36,6 +36,7 @@ class Brick extends RectangleComponent
       other,
     );
     removeFromParent();
+    game.score.value++;
 
     // The win condition check queries the world for bricks,
     // and confirms that only one remains.
