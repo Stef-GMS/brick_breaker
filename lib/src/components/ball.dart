@@ -5,7 +5,9 @@ import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 
 import 'package:brick_breaker/src/brick_breaker.dart';
-import 'package:brick_breaker/src/components/components.dart';
+import 'package:brick_breaker/src/components/bat.dart';
+import 'package:brick_breaker/src/components/brick.dart';
+import 'package:brick_breaker/src/components/play_area.dart';
 
 class Ball extends CircleComponent
     with //
@@ -15,6 +17,7 @@ class Ball extends CircleComponent
     required this.velocity,
     required super.position,
     required double radius,
+    required this.difficultyModifier,
   }) : super(
           radius: radius,
           anchor: Anchor.center,
@@ -27,6 +30,7 @@ class Ball extends CircleComponent
         );
 
   final Vector2 velocity;
+  final double difficultyModifier;
 
   @override
   void update(double dt) {
@@ -78,8 +82,19 @@ class Ball extends CircleComponent
       // at the time of contact.
       velocity.x = velocity.x + //
           (position.x - other.position.x) / other.size.x * game.width * 0.3;
-    } else {
-      debugPrint('collision with $other');
+    } else if (other is Brick) {
+      if (position.y < other.position.y - other.size.y / 2) {
+        velocity.y = -velocity.y;
+      } else if (position.y > other.position.y + other.size.y / 2) {
+        velocity.y = -velocity.y;
+      } else if (position.x < other.position.x) {
+        velocity.x = -velocity.x;
+      } else if (position.x > other.position.x) {
+        velocity.x = -velocity.x;
+      }
+      //  difficulty modifier that increases the ball velocity
+      //  after each brick collision
+      velocity.setFrom(velocity * difficultyModifier);
     }
   }
 }

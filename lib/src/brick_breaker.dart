@@ -67,6 +67,7 @@ class BrickBreaker extends FlameGame
     // is then scaled up to be a 1/4 of the height of the game.
     world.add(
       Ball(
+        difficultyModifier: difficultyModifier,
         radius: ballRadius,
         position: size / 2,
         velocity: Vector2(
@@ -88,6 +89,21 @@ class BrickBreaker extends FlameGame
           height * 0.95,
         ),
       ),
+    );
+
+    await world.addAll(
+      [
+        // Add from here...
+        for (var i = 0; i < brickColors.length; i++)
+          for (var j = 1; j <= 5; j++)
+            Brick(
+              position: Vector2(
+                (i + 0.5) * brickWidth + (i + 1) * brickGutter,
+                (j + 2.0) * brickHeight + j * brickGutter,
+              ),
+              color: brickColors[i],
+            ),
+      ],
     );
 
     // Turn on the debugging display, which adds additional
