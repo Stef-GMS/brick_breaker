@@ -4,13 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:brick_breaker/src/brick_breaker.dart';
 import 'package:brick_breaker/src/config.dart';
-import 'package:brick_breaker/src/widgets/overlay_screen.dart'; // Add this import
+import 'package:brick_breaker/src/widgets/overlay_screen.dart';
 import 'package:brick_breaker/src/widgets/score_card.dart';
 
 class GameApp extends StatefulWidget {
   const GameApp({super.key});
 
-  @override // Add from here...
+  @override
   State<GameApp> createState() => _GameAppState();
 }
 
